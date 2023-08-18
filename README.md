@@ -42,3 +42,44 @@ import (
 - Go 1.16부터 모듈 사용이 기본으로 됐음. 이전까지는 Go 모듈을 만들지 않는 코드는 모두 GOPATH/src 폴더에 있어야 했지만 이제는 모든 Go코드들이 Go 모듈 아래 있어야함.
 - go build를 하려면 반드시 Go 모듈 루트 폴더에 go.mod 파일이 존재해야함.
 - Go는 go build를 통해 실행파일을 만들 때, go.mod와 외부 패키지 버전정보를 담고 있는 go.sum 파일을 통해 실행파일을 만들게 됨
+
+## 슬라이스
+- 슬라이스는 내장 타입으로 내부 구현이 감춰져 있지만 reflect 패키지의 SliceHeader 구조체를 사용함.
+```
+type SliceHeader struct {
+	Data uintptr // 배열을 가르키는 포인터
+	Len  int // 현재 요소의 개수
+	Cap  int // 실제 배열의 길이
+}
+```
+
+### 배열과 슬라이스의 동작 차이
+```
+func chanceArray(array [5]int) {
+    array[2] = 200
+}
+
+func chanceSlice(slice2 []int) {
+    slice[2] = 200
+}
+
+func main() {
+  array := [5]int {1, 2, 3, 4, 5}
+  slice := []int {1, 2, 3, 4, 5}
+  
+  changeArray(array) // 동작안함
+  changeSlice(slice) // 동작함
+}
+```
+- Go 언어에서 모든 값의 대입은 복사로 일어나고, 함수의 인수로 전달될 때의 값의 이동도 복사로 일어남
+- 슬라이스는 포인터, len, cap을 복사하기 때문에 같은 주소값을 가르킴
+
+## 메서드
+- Go언어에서는 클래스가 없어서 구조체 밖에서 메서드를 지정함.
+- 구조체 밖에 메서드를 정의할 때, 리시버라는 특별한 기능을 사용
+- 리시버 : 메서드가 어떤 구조체에 속하는지 표시하는 기법
+```
+func (r Rabbit) info() int {
+	return r.width * r.height
+}
+```
